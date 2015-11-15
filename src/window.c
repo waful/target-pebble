@@ -4,7 +4,9 @@ static Window *s_window;
 static Layer *s_rings_canvas;
 static TextLayer *s_main_text_layer;
 
-static int s_hours, s_minutes, s_date, s_battery;
+static int s_hours = 0, s_minutes = 0, s_date = 0;
+
+static bool s_bt = true, low_bat = false;
 
 static int32_t get_angle_for_hour(int hour) {
   return (hour * 360) / 12;
@@ -16,33 +18,53 @@ static int32_t get_angle_for_minute(int minute) {
 
 static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   GRect bounds = layer_get_bounds(layer);
+  GColor8 minutes_color, hours_color;
+  
+  if(s_bt){
+    minutes_color = MINUTES_COLOR;
+    hours_color = HOURS_COLOR;
+  }
+  else{
+    minutes_color = MINUTES_NO_BT_COLOR;
+    hours_color = HOURS_NO_BT_COLOR;
+  }
+  
+  bool minutes_reversed = false;
+  bool hours_reversed = false;
+  
+  if(s_hours >= 12){
+    hours_reversed = true;
+  }
+  if(s_hours % 2){
+    minutes_reversed = true;
+  }
   
   // Convert hour from 24 to 12h
-  s_hours = s_hours == 0 ? 12 : s_hours;
   s_hours -= (s_hours > 12) ? 12 : 0;
-  
-  // Convert 0 minutes to 60 minutes
-  s_minutes = s_minutes == 0 ? 60 : s_minutes;
 
   // Minutes are expanding circle arc
   int minute_angle = get_angle_for_minute(s_minutes);
   GRect frame = grect_inset(bounds, GEdgeInsets(0));
-  // Draw unfilled
-  graphics_context_set_fill_color(ctx, MINUTES_UNFILLED_COLOR);
-  graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS * 1.5, 0, DEG_TO_TRIGANGLE(360));
-  graphics_context_set_fill_color(ctx, MINUTES_COLOR);
-  graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS * 1.5, 0, DEG_TO_TRIGANGLE(minute_angle));
+  graphics_context_set_fill_color(ctx, minutes_color);
+  if(!minutes_reversed){
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS * 1.5, 0, DEG_TO_TRIGANGLE(minute_angle));
+  }
+  else{
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS * 1.5, DEG_TO_TRIGANGLE(minute_angle), DEG_TO_TRIGANGLE(360));
+  }
 
   // Adjust geometry variables for inner ring
   frame = grect_inset(frame, GEdgeInsets(BAR_RADIUS * 1.3));
 
   // Hours are expanding circle arc
   int hour_angle = get_angle_for_hour(s_hours);
-  // Draw unfilled
-  graphics_context_set_fill_color(ctx, HOURS_UNFILLED_COLOR);
-  graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, 0, DEG_TO_TRIGANGLE(360));
-  graphics_context_set_fill_color(ctx, HOURS_COLOR);
-  graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, 0, DEG_TO_TRIGANGLE(hour_angle));
+  graphics_context_set_fill_color(ctx, hours_color);
+  if(!hours_reversed){
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, 0, DEG_TO_TRIGANGLE(hour_angle));
+  }
+  else{
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, DEG_TO_TRIGANGLE(hour_angle), DEG_TO_TRIGANGLE(360));
+  }
 }
 
 static void draw_text(){
@@ -99,10 +121,24 @@ void main_window_date_update(int date) {
 }
 
 void main_window_battery_update(int battery) {
+  bool tmp_low_bat = false;
   if(battery <= 20){
-    text_layer_set_text_color(s_main_text_layer, TEXT_LOW_BATTERY_COLOR);
+    tmp_low_bat = true;
   }
-  else{
-    text_layer_set_text_color(s_main_text_layer, TEXT_COLOR);
+  if(tmp_low_bat != low_bat){
+    low_bat = tmp_low_bat;
+    if(low_bat){
+      text_layer_set_text_color(s_main_text_layer, TEXT_LOW_BATTERY_COLOR);
+    }
+    else{
+      text_layer_set_text_color(s_main_text_layer, TEXT_COLOR);
+    }
+  }
+}
+
+void main_window_bt_update(bool bt) {
+  if(bt != s_bt){
+    s_bt = bt;
+    layer_mark_dirty(s_rings_canvas);
   }
 }

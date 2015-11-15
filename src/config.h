@@ -3,9 +3,9 @@
 #include <pebble.h>
 
 #define MINUTES_COLOR GColorRed
-#define MINUTES_UNFILLED_COLOR GColorBlack
+#define MINUTES_NO_BT_COLOR GColorLightGray
 #define HOURS_COLOR GColorYellow
-#define HOURS_UNFILLED_COLOR GColorBlack
+#define HOURS_NO_BT_COLOR GColorDarkGray
 #define TEXT_COLOR GColorWhite
 #define TEXT_LOW_BATTERY_COLOR GColorDarkGray
 #define BG_COLOR GColorBlack
