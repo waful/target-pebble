@@ -1,0 +1,22 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        "configurable"
+    ],
+    "companyName": "Waful",
+    "longName": "Target",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "Target",
+    "targetPlatforms": [
+        "chalk"
+    ],
+    "uuid": "3b410000-c8f5-47cd-af5a-ab33c8f92ea7",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
