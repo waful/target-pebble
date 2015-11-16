@@ -18,7 +18,7 @@ static int32_t get_angle_for_minute(int minute) {
 
 static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   GRect bounds = layer_get_bounds(layer);
-  GColor8 minutes_color, hours_color;
+  GColor8 minutes_color, hours_color, ring_marker_color;
   
   if(s_bt){
     minutes_color = MINUTES_COLOR;
@@ -65,15 +65,7 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   }
   else{
     graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS - 1, DEG_TO_TRIGANGLE(hour_angle), DEG_TO_TRIGANGLE(360));
-  }
-  
-  // draw hour markers
-  frame = grect_inset(frame, GEdgeInsets(-RING_MARKER_LENGTH/2));
-  graphics_context_set_fill_color(ctx, RING_MARKER_COLOR);
-  for(int i = 0; i < 12; i++){
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, RING_MARKER_LENGTH, DEG_TO_TRIGANGLE(i*30-1), DEG_TO_TRIGANGLE(i*30+1));
-  }
-  
+  }  
 }
 
 static void draw_text(){
