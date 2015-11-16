@@ -32,7 +32,7 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   bool minutes_reversed = false;
   bool hours_reversed = false;
   
-  if(s_hours >= 12){
+  if(s_hours > 12){
     hours_reversed = true;
   }
   if(s_hours % 2){
@@ -40,31 +40,40 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   }
   
   // Convert hour from 24 to 12h
-  s_hours -= (s_hours > 12) ? 12 : 0;
+  int tmp_s_hours = s_hours;
+  tmp_s_hours -= (tmp_s_hours > 12) ? 12 : 0;
 
   // Minutes are expanding circle arc
   int minute_angle = get_angle_for_minute(s_minutes);
   GRect frame = grect_inset(bounds, GEdgeInsets(0));
   graphics_context_set_fill_color(ctx, minutes_color);
   if(!minutes_reversed){
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS * 1.5, 0, DEG_TO_TRIGANGLE(minute_angle));
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, 0, DEG_TO_TRIGANGLE(minute_angle));
   }
   else{
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS * 1.5, DEG_TO_TRIGANGLE(minute_angle), DEG_TO_TRIGANGLE(360));
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, DEG_TO_TRIGANGLE(minute_angle), DEG_TO_TRIGANGLE(360));
   }
 
   // Adjust geometry variables for inner ring
-  frame = grect_inset(frame, GEdgeInsets(BAR_RADIUS * 1.3));
+  frame = grect_inset(frame, GEdgeInsets(BAR_RADIUS - 1));
 
   // Hours are expanding circle arc
-  int hour_angle = get_angle_for_hour(s_hours);
+  int hour_angle = get_angle_for_hour(tmp_s_hours);
   graphics_context_set_fill_color(ctx, hours_color);
   if(!hours_reversed){
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, 0, DEG_TO_TRIGANGLE(hour_angle));
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS - 1, 0, DEG_TO_TRIGANGLE(hour_angle));
   }
   else{
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, DEG_TO_TRIGANGLE(hour_angle), DEG_TO_TRIGANGLE(360));
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS - 1, DEG_TO_TRIGANGLE(hour_angle), DEG_TO_TRIGANGLE(360));
   }
+  
+  // draw hour markers
+  frame = grect_inset(frame, GEdgeInsets(-RING_MARKER_LENGTH/2));
+  graphics_context_set_fill_color(ctx, RING_MARKER_COLOR);
+  for(int i = 0; i < 12; i++){
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, RING_MARKER_LENGTH, DEG_TO_TRIGANGLE(i*30-1), DEG_TO_TRIGANGLE(i*30+1));
+  }
+  
 }
 
 static void draw_text(){
@@ -85,7 +94,7 @@ static void window_load(Window *window) {
   layer_set_update_proc(s_rings_canvas, rings_layer_update_proc);
   layer_add_child(window_layer, s_rings_canvas);
   
-  s_main_text_layer = text_layer_create(GRect(BAR_RADIUS * 2.3, (bounds.size.h / 2.0) - 27, bounds.size.w - BAR_RADIUS * 4.6, 42));
+  s_main_text_layer = text_layer_create(GRect(BAR_RADIUS * 2, (bounds.size.h / 2.0) - 27, bounds.size.w - BAR_RADIUS * 4, 42));
   text_layer_set_text_alignment(s_main_text_layer, GTextAlignmentCenter);
   text_layer_set_background_color(s_main_text_layer, GColorClear);
   text_layer_set_text_color(s_main_text_layer, TEXT_COLOR);
