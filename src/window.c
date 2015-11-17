@@ -8,7 +8,7 @@ static int s_hours = 0, s_minutes = 0, s_date = 0;
 
 static bool s_bt = true, low_bat = false;
 
-static int32_t get_angle_for_hour(int hour) {
+static int32_t get_angle_for_hour(double hour) {
   return (hour * 360) / 12;
 }
 
@@ -18,7 +18,7 @@ static int32_t get_angle_for_minute(int minute) {
 
 static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   GRect bounds = layer_get_bounds(layer);
-  GColor8 minutes_color, hours_color, ring_marker_color;
+  GColor8 minutes_color, hours_color;
   
   if(s_bt){
     minutes_color = MINUTES_COLOR;
@@ -28,6 +28,9 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
     minutes_color = MINUTES_NO_BT_COLOR;
     hours_color = HOURS_NO_BT_COLOR;
   }
+
+  
+  
   
   bool minutes_reversed = false;
   bool hours_reversed = false;
@@ -40,8 +43,9 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   }
   
   // Convert hour from 24 to 12h
-  int tmp_s_hours = s_hours;
+  double tmp_s_hours = s_hours;
   tmp_s_hours -= (tmp_s_hours > 12) ? 12 : 0;
+  tmp_s_hours += (s_minutes / 60.0);
 
   // Minutes are expanding circle arc
   int minute_angle = get_angle_for_minute(s_minutes);
@@ -55,17 +59,88 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   }
 
   // Adjust geometry variables for inner ring
-  frame = grect_inset(frame, GEdgeInsets(BAR_RADIUS - 1));
+  frame = grect_inset(frame, GEdgeInsets(BAR_RADIUS));
 
   // Hours are expanding circle arc
   int hour_angle = get_angle_for_hour(tmp_s_hours);
   graphics_context_set_fill_color(ctx, hours_color);
   if(!hours_reversed){
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS - 1, 0, DEG_TO_TRIGANGLE(hour_angle));
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, 0, DEG_TO_TRIGANGLE(hour_angle));
   }
   else{
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS - 1, DEG_TO_TRIGANGLE(hour_angle), DEG_TO_TRIGANGLE(360));
-  }  
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, DEG_TO_TRIGANGLE(hour_angle), DEG_TO_TRIGANGLE(360));
+  }
+  
+  for(int i = 0; i < 60; i++){
+    GRect tmp_frame = grect_inset(bounds, GEdgeInsets(0));
+    int marker_length = i % 5 ? 6 : 10;
+    
+    bool mono_color = false;
+    
+    if(i == 0 && s_minutes == 0){
+      mono_color = true;
+    }
+    else if(i != 0 && i != s_minutes){
+      mono_color = true;
+    }
+    
+    if(mono_color){
+      if(i == 0){
+        if(!minutes_reversed){
+          graphics_context_set_fill_color(ctx, minutes_color);
+        }
+        else{
+          graphics_context_set_fill_color(ctx, BG_COLOR);
+        }
+      }
+      else{
+        if((i < s_minutes && !minutes_reversed) || (i > s_minutes && minutes_reversed)){
+          graphics_context_set_fill_color(ctx, BG_COLOR);
+        }
+        else{
+          graphics_context_set_fill_color(ctx, minutes_color);
+        }
+      }
+      graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6 - 1), DEG_TO_TRIGANGLE(i * 6 + 1));
+    }
+    else{
+      if(i == 0){
+        if(!minutes_reversed){
+          graphics_context_set_fill_color(ctx, minutes_color);
+        }
+        else{
+          graphics_context_set_fill_color(ctx, BG_COLOR);
+        }
+      }
+      else{
+        if(!minutes_reversed){
+          graphics_context_set_fill_color(ctx, BG_COLOR);
+        }
+        else{
+          graphics_context_set_fill_color(ctx, minutes_color);
+        }
+      }
+      graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6 - 1), DEG_TO_TRIGANGLE(i * 6));
+
+      if(i == 0){
+        if(!minutes_reversed){
+          graphics_context_set_fill_color(ctx, BG_COLOR);
+        }
+        else{
+          graphics_context_set_fill_color(ctx, minutes_color);
+        }
+      }
+      else{
+        if(!minutes_reversed){
+          graphics_context_set_fill_color(ctx, minutes_color);
+        }
+        else{
+          graphics_context_set_fill_color(ctx, BG_COLOR);
+        }
+      }
+      graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6), DEG_TO_TRIGANGLE(i * 6 + 1));
+    }
+  }
 }
 
 static void draw_text(){

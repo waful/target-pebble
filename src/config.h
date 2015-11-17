@@ -11,4 +11,3 @@
 #define BG_COLOR GColorBlack
 
 #define BAR_RADIUS 25
-#define RING_MARKER_LENGTH 4
