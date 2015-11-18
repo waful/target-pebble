@@ -10,4 +10,4 @@
 #define TEXT_LOW_BATTERY_COLOR GColorDarkGray
 #define BG_COLOR GColorBlack
 
-#define BAR_RADIUS 25
+#define BAR_RADIUS 28
