@@ -52,10 +52,10 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   GRect frame = grect_inset(bounds, GEdgeInsets(0));
   graphics_context_set_fill_color(ctx, minutes_color);
   if(!minutes_reversed){
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, 0, DEG_TO_TRIGANGLE(minute_angle));
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS + 1, 0, DEG_TO_TRIGANGLE(minute_angle));
   }
   else{
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, DEG_TO_TRIGANGLE(minute_angle), DEG_TO_TRIGANGLE(360));
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS + 1, DEG_TO_TRIGANGLE(minute_angle), DEG_TO_TRIGANGLE(360));
   }
 
   // Adjust geometry variables for inner ring
@@ -75,68 +75,31 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
     GRect tmp_frame = grect_inset(bounds, GEdgeInsets(0));
     int marker_length = i % 5 ? 6 : 10;
     
-    bool mono_color = false;
-    
-    if(i == 0 && s_minutes == 0){
-      mono_color = true;
-    }
-    else if(i != 0 && i != s_minutes){
-      mono_color = true;
-    }
+    bool mono_color = (i == 0 && s_minutes == 0) || (i != 0 && i != s_minutes);
     
     if(mono_color){
-      if(i == 0){
-        if(!minutes_reversed){
-          graphics_context_set_fill_color(ctx, minutes_color);
-        }
-        else{
-          graphics_context_set_fill_color(ctx, BG_COLOR);
-        }
+      if((i == 0 && minutes_reversed) || (i < s_minutes && !minutes_reversed) || (i > s_minutes && minutes_reversed)){
+        graphics_context_set_fill_color(ctx, BG_COLOR);
       }
       else{
-        if((i < s_minutes && !minutes_reversed) || (i > s_minutes && minutes_reversed)){
-          graphics_context_set_fill_color(ctx, BG_COLOR);
-        }
-        else{
-          graphics_context_set_fill_color(ctx, minutes_color);
-        }
+        graphics_context_set_fill_color(ctx, minutes_color);
       }
       graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6 - 1), DEG_TO_TRIGANGLE(i * 6 + 1));
     }
     else{
-      if(i == 0){
-        if(!minutes_reversed){
-          graphics_context_set_fill_color(ctx, minutes_color);
-        }
-        else{
-          graphics_context_set_fill_color(ctx, BG_COLOR);
-        }
+      if((i == 0 && minutes_reversed) || (i != 0 && !minutes_reversed)){
+        graphics_context_set_fill_color(ctx, BG_COLOR);
       }
       else{
-        if(!minutes_reversed){
-          graphics_context_set_fill_color(ctx, BG_COLOR);
-        }
-        else{
-          graphics_context_set_fill_color(ctx, minutes_color);
-        }
+        graphics_context_set_fill_color(ctx, minutes_color);
       }
       graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6 - 1), DEG_TO_TRIGANGLE(i * 6));
 
-      if(i == 0){
-        if(!minutes_reversed){
-          graphics_context_set_fill_color(ctx, BG_COLOR);
-        }
-        else{
-          graphics_context_set_fill_color(ctx, minutes_color);
-        }
+      if((i == 0 && minutes_reversed) || (i != 0 && !minutes_reversed)){
+        graphics_context_set_fill_color(ctx, minutes_color);
       }
       else{
-        if(!minutes_reversed){
-          graphics_context_set_fill_color(ctx, minutes_color);
-        }
-        else{
-          graphics_context_set_fill_color(ctx, BG_COLOR);
-        }
+        graphics_context_set_fill_color(ctx, BG_COLOR);
       }
       graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6), DEG_TO_TRIGANGLE(i * 6 + 1));
     }
