@@ -3,6 +3,88 @@
     "capabilities": [
         "configurable"
     ],
+    "appKeys": {
+	    "minutes_color": 0,
+	    "minutes_no_bt_color": 1,
+	    "hours_color": 2,
+	    "hours_no_bt_color": 3,
+	    "text_color": 4,
+	    "text_low_battery_color": 5,
+	    "bg_color": 6,
+	    "bar_radius": 7,
+	    "bar_offset": 8,
+	    "ring_markings": 9
+	},
+	"preferences": {
+	    "items": [
+	    	{
+		        "name": "minutes_color",
+		        "title": "Minutes ring color",
+		        "type": "color",
+		        "default": "0x16638d"
+		    },
+		    {
+		        "name": "minutes_no_bt_color",
+		        "title": "Minutes ring color (no Bluetooth)",
+		        "type": "color",
+		        "default": "0xababab"
+		    },
+		    {
+		        "name": "hours_color",
+		        "title": "Hours ring color",
+		        "type": "color",
+		        "default": "0xffeeab"
+		    },
+		    {
+		        "name": "hours_no_bt_color",
+		        "title": "Hours ring color (no Bluetooth)",
+		        "type": "color",
+		        "default": "0x545454"
+		    },
+		    {
+		        "name": "text_color",
+		        "title": "Date color",
+		        "type": "color",
+		        "default": "0xffffff"
+		    },
+		    {
+		        "name": "text_low_battery_color",
+		        "title": "Date color (low battery)",
+		        "type": "color",
+		        "default": "0x545454"
+		    },
+		    {
+		        "name": "bg_color",
+		        "title": "Background color",
+		        "type": "color",
+		        "default": "0x000000"
+		    },
+		    {
+		        "name": "bar_radius",
+		        "title": "Ring thickness",
+		        "type": "integer",
+		        "min": 12,
+		        "max": 28,
+		        "default": 20
+	    	},
+		    {
+		        "name": "bar_offset",
+		        "title": "Ring offset",
+		        "type": "integer",
+		        "min": 0,
+		        "max": 20,
+		        "default": 12
+	    	},
+		    {
+		        "name": "ring_markings",
+		        "title": "Ring markings",
+		        "type": "boolean",
+		        "default": true,
+		        "off-text": "Markings off",
+		        "on-text": "Markings on"
+	    	}
+	    ]
+	},
     "companyName": "waful",
     "longName": "Target",
     "projectType": "native",
@@ -15,7 +97,7 @@
         "chalk"
     ],
     "uuid": "3b410000-c8f5-47cd-af5a-ab33c8f92ea7",
-    "versionLabel": "1.3",
+    "versionLabel": "1.4",
     "watchapp": {
         "watchface": true
     }

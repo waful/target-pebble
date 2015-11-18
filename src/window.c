@@ -4,6 +4,10 @@ static Window *s_window;
 static Layer *s_rings_canvas;
 static TextLayer *s_main_text_layer;
 
+static GColor8 MINUTES_COLOR, MINUTES_NO_BT_COLOR, HOURS_COLOR, HOURS_NO_BT_COLOR, TEXT_COLOR, TEXT_LOW_BATTERY_COLOR, BG_COLOR;
+static int BAR_RADIUS, BAR_OFFSET;
+static bool RING_MARKINGS;
+
 static int s_hours = 0, s_minutes = 0, s_date = 0;
 
 static bool s_bt = true, low_bat = false;
@@ -28,9 +32,6 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
     minutes_color = MINUTES_NO_BT_COLOR;
     hours_color = HOURS_NO_BT_COLOR;
   }
-
-  
-  
   
   bool minutes_reversed = false;
   bool hours_reversed = false;
@@ -52,14 +53,14 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   GRect frame = grect_inset(bounds, GEdgeInsets(0));
   graphics_context_set_fill_color(ctx, minutes_color);
   if(!minutes_reversed){
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS + 1, 0, DEG_TO_TRIGANGLE(minute_angle));
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, 0, DEG_TO_TRIGANGLE(minute_angle));
   }
   else{
-    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS + 1, DEG_TO_TRIGANGLE(minute_angle), DEG_TO_TRIGANGLE(360));
+    graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, DEG_TO_TRIGANGLE(minute_angle), DEG_TO_TRIGANGLE(360));
   }
 
   // Adjust geometry variables for inner ring
-  frame = grect_inset(frame, GEdgeInsets(BAR_RADIUS));
+  frame = grect_inset(frame, GEdgeInsets(BAR_RADIUS + BAR_OFFSET));
 
   // Hours are expanding circle arc
   int hour_angle = get_angle_for_hour(tmp_s_hours);
@@ -71,37 +72,39 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
     graphics_fill_radial(ctx, frame, GOvalScaleModeFitCircle, BAR_RADIUS, DEG_TO_TRIGANGLE(hour_angle), DEG_TO_TRIGANGLE(360));
   }
   
-  for(int i = 0; i < 60; i++){
-    GRect tmp_frame = grect_inset(bounds, GEdgeInsets(0));
-    int marker_length = i % 5 ? 6 : 10;
-    
-    bool mono_color = (i == 0 && s_minutes == 0) || (i != 0 && i != s_minutes);
-    
-    if(mono_color){
-      if((i == 0 && minutes_reversed) || (i < s_minutes && !minutes_reversed) || (i > s_minutes && minutes_reversed)){
-        graphics_context_set_fill_color(ctx, BG_COLOR);
+  if(RING_MARKINGS){
+    for(int i = 0; i < 60; i++){
+      GRect tmp_frame = grect_inset(bounds, GEdgeInsets(0));
+      int marker_length = i % 5 ? BAR_RADIUS / 4 : BAR_RADIUS / 2;
+      
+      bool mono_color = (i == 0 && s_minutes == 0) || (i != 0 && i != s_minutes);
+      
+      if(mono_color){
+        if((i == 0 && minutes_reversed) || (i < s_minutes && !minutes_reversed) || (i > s_minutes && minutes_reversed)){
+          graphics_context_set_fill_color(ctx, BG_COLOR);
+        }
+        else{
+          graphics_context_set_fill_color(ctx, minutes_color);
+        }
+        graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6 - 1), DEG_TO_TRIGANGLE(i * 6 + 1));
       }
       else{
-        graphics_context_set_fill_color(ctx, minutes_color);
-      }
-      graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6 - 1), DEG_TO_TRIGANGLE(i * 6 + 1));
-    }
-    else{
-      if((i == 0 && minutes_reversed) || (i != 0 && !minutes_reversed)){
-        graphics_context_set_fill_color(ctx, BG_COLOR);
-      }
-      else{
-        graphics_context_set_fill_color(ctx, minutes_color);
-      }
-      graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6 - 1), DEG_TO_TRIGANGLE(i * 6));
+        if((i == 0 && minutes_reversed) || (i != 0 && !minutes_reversed)){
+          graphics_context_set_fill_color(ctx, BG_COLOR);
+        }
+        else{
+          graphics_context_set_fill_color(ctx, minutes_color);
+        }
+        graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6 - 1), DEG_TO_TRIGANGLE(i * 6));
 
-      if((i == 0 && minutes_reversed) || (i != 0 && !minutes_reversed)){
-        graphics_context_set_fill_color(ctx, minutes_color);
+        if((i == 0 && minutes_reversed) || (i != 0 && !minutes_reversed)){
+          graphics_context_set_fill_color(ctx, minutes_color);
+        }
+        else{
+          graphics_context_set_fill_color(ctx, BG_COLOR);
+        }
+        graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6), DEG_TO_TRIGANGLE(i * 6 + 1));
       }
-      else{
-        graphics_context_set_fill_color(ctx, BG_COLOR);
-      }
-      graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6), DEG_TO_TRIGANGLE(i * 6 + 1));
     }
   }
 }
@@ -110,6 +113,13 @@ static void draw_text(){
   static char buf[] = "00.00";
   snprintf(buf, sizeof(buf), "%02d", s_date);
   text_layer_set_text(s_main_text_layer, buf);
+
+  if(low_bat){
+    text_layer_set_text_color(s_main_text_layer, TEXT_LOW_BATTERY_COLOR);
+  }
+  else{
+    text_layer_set_text_color(s_main_text_layer, TEXT_COLOR);
+  }
 }
 
 static void rings_layer_update_proc(Layer *layer, GContext *ctx) {
@@ -136,6 +146,25 @@ static void window_unload(Window *window) {
   text_layer_destroy(s_main_text_layer);
   layer_destroy(s_rings_canvas);
   window_destroy(s_window);
+}
+
+void main_window_set_config(GColor8 mc, GColor8 mnbtc, GColor8 hc, GColor8 hnbtc, GColor8 tc, GColor8 tlbc, GColor8 bc, int br, int bo, bool rm) {
+  MINUTES_COLOR = mc;
+  MINUTES_NO_BT_COLOR = mnbtc;
+  HOURS_COLOR = hc;
+  HOURS_NO_BT_COLOR = hnbtc;
+  TEXT_COLOR = tc;
+  TEXT_LOW_BATTERY_COLOR = tlbc;
+  BG_COLOR = bc;
+  BAR_RADIUS = br;
+  BAR_OFFSET = bo;
+  RING_MARKINGS = rm;
+}
+
+void main_window_redraw(){
+  layer_mark_dirty(s_rings_canvas);
+  draw_text();
+  window_set_background_color(s_window, BG_COLOR);
 }
 
 void main_window_init() {
@@ -166,12 +195,7 @@ void main_window_battery_update(int battery) {
   }
   if(tmp_low_bat != low_bat){
     low_bat = tmp_low_bat;
-    if(low_bat){
-      text_layer_set_text_color(s_main_text_layer, TEXT_LOW_BATTERY_COLOR);
-    }
-    else{
-      text_layer_set_text_color(s_main_text_layer, TEXT_COLOR);
-    }
+    draw_text();
   }
 }
 
