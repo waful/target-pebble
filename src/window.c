@@ -21,6 +21,7 @@ static int32_t get_angle_for_minute(int minute) {
 }
 
 static void draw_hour_and_minute(Layer *layer, GContext *ctx){
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of draw hour and minute");
   GRect bounds = layer_get_bounds(layer);
   GColor8 minutes_color, hours_color;
   
@@ -107,9 +108,11 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
       }
     }
   }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of draw hour and minute");
 }
 
 static void draw_text(){
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of draw text");
   static char buf[] = "00.00";
   snprintf(buf, sizeof(buf), "%02d", s_date);
   text_layer_set_text(s_main_text_layer, buf);
@@ -120,13 +123,17 @@ static void draw_text(){
   else{
     text_layer_set_text_color(s_main_text_layer, TEXT_COLOR);
   }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of draw text");
 }
 
 static void rings_layer_update_proc(Layer *layer, GContext *ctx) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of ring layer update");
   draw_hour_and_minute(layer, ctx);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of ring layer update");
 }
 
 static void window_load(Window *window) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of window load");
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
@@ -140,15 +147,19 @@ static void window_load(Window *window) {
   text_layer_set_text_color(s_main_text_layer, TEXT_COLOR);
   text_layer_set_font(s_main_text_layer, fonts_get_system_font(FONT_KEY_LECO_42_NUMBERS));
   layer_add_child(window_layer, text_layer_get_layer(s_main_text_layer));
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of window load");
 }
 
 static void window_unload(Window *window) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of window unload");
   text_layer_destroy(s_main_text_layer);
   layer_destroy(s_rings_canvas);
   window_destroy(s_window);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of window unload");
 }
 
 void main_window_set_config(GColor8 mc, GColor8 mnbtc, GColor8 hc, GColor8 hnbtc, GColor8 tc, GColor8 tlbc, GColor8 bc, int br, int bo, bool rm) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of set config");
   MINUTES_COLOR = mc;
   MINUTES_NO_BT_COLOR = mnbtc;
   HOURS_COLOR = hc;
@@ -159,15 +170,19 @@ void main_window_set_config(GColor8 mc, GColor8 mnbtc, GColor8 hc, GColor8 hnbtc
   BAR_RADIUS = br;
   BAR_OFFSET = bo;
   RING_MARKINGS = rm;
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of set config");
 }
 
 void main_window_redraw(){
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of window redraw");
   layer_mark_dirty(s_rings_canvas);
   draw_text();
   window_set_background_color(s_window, BG_COLOR);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of window redraw");
 }
 
 void main_window_init() {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of window init");
   s_window = window_create();
   window_set_background_color(s_window, BG_COLOR);
   window_set_window_handlers(s_window, (WindowHandlers) {
@@ -175,20 +190,26 @@ void main_window_init() {
     .unload = window_unload,
   });
   window_stack_push(s_window, true);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of window init");
 }
 
 void main_window_minute_update(int hours, int minutes) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of minute update");
   s_hours = hours;
   s_minutes = minutes;
   layer_mark_dirty(s_rings_canvas);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of minute update");
 }
 
 void main_window_date_update(int date) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of date update");
   s_date = date;
   draw_text();
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of date update");
 }
 
 void main_window_battery_update(int battery) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of battery update");
   bool tmp_low_bat = false;
   if(battery <= 20){
     tmp_low_bat = true;
@@ -197,11 +218,14 @@ void main_window_battery_update(int battery) {
     low_bat = tmp_low_bat;
     draw_text();
   }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of battery update");
 }
 
 void main_window_bt_update(bool bt) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of bt update");
   if(bt != s_bt){
     s_bt = bt;
     layer_mark_dirty(s_rings_canvas);
   }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of bt update");
 }
