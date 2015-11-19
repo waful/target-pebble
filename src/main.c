@@ -67,7 +67,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
 
 static void init() {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "start of init");
-  autoconfig_init(32, 32);
+  autoconfig_init(512, 512);
   app_message_register_inbox_received(in_received_handler);
   main_window_set_config(getMinutes_color(), getMinutes_no_bt_color(), getHours_color(), getHours_no_bt_color(), getText_color(), getText_low_battery_color(), getBg_color(), getBar_radius(), getBar_offset(), getRing_markings());
   BT_VIBE = getBt_vibe();
