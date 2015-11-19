@@ -25,6 +25,12 @@ static void tick_handler(struct tm *time_now, TimeUnits changed) {
   first_run = false;
 }
 
+void focus_handler(bool in_focus) {
+  if (in_focus) {
+    main_window_redraw();
+  }
+}
+
 static void battery_callback(BatteryChargeState state) {
   main_window_battery_update(state.charge_percent);
 }
@@ -62,6 +68,7 @@ static void init() {
   battery_callback(battery_state_service_peek());
   bluetooth_connection_service_subscribe(bluetooth_callback);
   bluetooth_callback(bluetooth_connection_service_peek());
+  app_focus_service_subscribe(focus_handler);
 }
 
 static void deinit() { 
