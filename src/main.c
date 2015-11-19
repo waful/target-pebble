@@ -25,13 +25,13 @@ static void tick_handler(struct tm *time_now, TimeUnits changed) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "end of tick handler");
 }
 
-void focus_handler(bool in_focus) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of focus handler");
-  if (in_focus) {
-    main_window_redraw();
-  }
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of focus handler");
-}
+//void focus_handler(bool in_focus) {
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of focus handler");
+//  if (in_focus) {
+//    main_window_redraw();
+//  }
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of focus handler");
+//}
 
 static void battery_callback(BatteryChargeState state) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "start of battery handler");
@@ -67,7 +67,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
 
 static void init() {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "start of init");
-  autoconfig_init();
+  autoconfig_init(32, 32);
   app_message_register_inbox_received(in_received_handler);
   main_window_set_config(getMinutes_color(), getMinutes_no_bt_color(), getHours_color(), getHours_no_bt_color(), getText_color(), getText_low_battery_color(), getBg_color(), getBar_radius(), getBar_offset(), getRing_markings());
   BT_VIBE = getBt_vibe();
@@ -77,7 +77,7 @@ static void init() {
   battery_callback(battery_state_service_peek());
   bluetooth_connection_service_subscribe(bluetooth_callback);
   bluetooth_callback(bluetooth_connection_service_peek());
-  app_focus_service_subscribe(focus_handler);
+//  app_focus_service_subscribe(focus_handler);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "end of init");
 }
 
