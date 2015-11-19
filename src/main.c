@@ -9,8 +9,6 @@ static bool BT_VIBE;
 static void tick_handler(struct tm *time_now, TimeUnits changed) {
   static bool first_run = true;
 
-  window_set_background_color(s_window, getBg_color());
-
   if(first_run || (changed & MINUTE_UNIT)){
     // Convert to 24h
     char the_24h_buffer[] = "00";
@@ -23,6 +21,7 @@ static void tick_handler(struct tm *time_now, TimeUnits changed) {
   if(first_run || (changed & DAY_UNIT)){
     main_window_date_update(time_now->tm_mday);
   }
+  
   first_run = false;
 }
 
