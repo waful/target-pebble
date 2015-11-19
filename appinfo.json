@@ -97,7 +97,7 @@
         "chalk"
     ],
     "uuid": "3b410000-c8f5-47cd-af5a-ab33c8f92ea7",
-    "versionLabel": "1.4",
+    "versionLabel": "1.6",
     "watchapp": {
         "watchface": true
     }

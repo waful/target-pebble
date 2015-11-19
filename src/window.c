@@ -75,7 +75,7 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   if(RING_MARKINGS){
     for(int i = 0; i < 60; i++){
       GRect tmp_frame = grect_inset(bounds, GEdgeInsets(0));
-      int marker_length = i % 5 ? BAR_RADIUS / 4 : BAR_RADIUS / 2;
+      int marker_length = i % 5 ? BAR_RADIUS / 3 : BAR_RADIUS / 2;
       
       bool mono_color = (i == 0 && s_minutes == 0) || (i != 0 && i != s_minutes);
       
