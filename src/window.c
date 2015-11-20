@@ -154,7 +154,6 @@ static void window_unload(Window *window) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "start of window unload");
   text_layer_destroy(s_main_text_layer);
   layer_destroy(s_rings_canvas);
-  window_destroy(s_window);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "end of window unload");
 }
 
@@ -191,6 +190,10 @@ void main_window_init() {
   });
   window_stack_push(s_window, true);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "end of window init");
+}
+
+void main_window_deinit(){
+  window_destroy(s_window);
 }
 
 void main_window_minute_update(int hours, int minutes) {

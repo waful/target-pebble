@@ -14,7 +14,7 @@
 	    "bar_radius": 7,
 	    "bar_offset": 8,
 	    "ring_markings": 9,
-		"bt_vibe": 9
+		"bt_vibe": 10
 	},
 	"preferences": {
 	    "items": [
@@ -106,7 +106,7 @@
         "chalk"
     ],
     "uuid": "3b410000-c8f5-47cd-af5a-ab33c8f92ea7",
-    "versionLabel": "1.11",
+    "versionLabel": "1.13",
     "watchapp": {
         "watchface": true
     }

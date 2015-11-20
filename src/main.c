@@ -83,6 +83,7 @@ static void init() {
 
 static void deinit() {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "start of deinit");
+  main_window_deinit();
   tick_timer_service_unsubscribe();
   battery_state_service_unsubscribe();
   autoconfig_deinit();
