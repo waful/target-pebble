@@ -25,14 +25,6 @@ static void tick_handler(struct tm *time_now, TimeUnits changed) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "end of tick handler");
 }
 
-//void focus_handler(bool in_focus) {
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "start of focus handler");
-//  if (in_focus) {
-//    main_window_redraw();
-//  }
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "end of focus handler");
-//}
-
 static void battery_callback(BatteryChargeState state) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "start of battery handler");
   main_window_battery_update(state.charge_percent);
@@ -45,7 +37,7 @@ static void bluetooth_callback(bool connected) {
   static bool first_call = true;
   if(BT_VIBE && !first_call){
       if(connected){
-        vibes_long_pulse();
+        vibes_short_pulse();
       }
       else{
         vibes_double_pulse();
@@ -77,7 +69,6 @@ static void init() {
   battery_callback(battery_state_service_peek());
   bluetooth_connection_service_subscribe(bluetooth_callback);
   bluetooth_callback(bluetooth_connection_service_peek());
-//  app_focus_service_subscribe(focus_handler);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "end of init");
 }
 

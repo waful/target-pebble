@@ -74,11 +74,11 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   }
   
   if(RING_MARKINGS){
-    for(int i = 0; i < 60; i++){
+    for(int i = 0; i < 12; i++){
       GRect tmp_frame = grect_inset(bounds, GEdgeInsets(0));
-      int marker_length = i % 5 ? BAR_RADIUS / 3 : BAR_RADIUS / 2;
+      int marker_length = BAR_RADIUS / 2;
       
-      bool mono_color = (i == 0 && s_minutes == 0) || (i != 0 && i != s_minutes);
+      bool mono_color = (i == 0 && s_minutes == 0) || (i != 0 && i * 5 != s_minutes);
       
       if(mono_color){
         if((i == 0 && minutes_reversed) || (i < s_minutes && !minutes_reversed) || (i > s_minutes && minutes_reversed)){
@@ -87,7 +87,7 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
         else{
           graphics_context_set_fill_color(ctx, minutes_color);
         }
-        graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6 - 1), DEG_TO_TRIGANGLE(i * 6 + 1));
+        graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 30 - 1), DEG_TO_TRIGANGLE(i * 30 + 1));
       }
       else{
         if((i == 0 && minutes_reversed) || (i != 0 && !minutes_reversed)){
@@ -96,7 +96,7 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
         else{
           graphics_context_set_fill_color(ctx, minutes_color);
         }
-        graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6 - 1), DEG_TO_TRIGANGLE(i * 6));
+        graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 30 - 1), DEG_TO_TRIGANGLE(i * 30));
 
         if((i == 0 && minutes_reversed) || (i != 0 && !minutes_reversed)){
           graphics_context_set_fill_color(ctx, minutes_color);
@@ -104,7 +104,7 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
         else{
           graphics_context_set_fill_color(ctx, BG_COLOR);
         }
-        graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 6), DEG_TO_TRIGANGLE(i * 6 + 1));
+        graphics_fill_radial(ctx, tmp_frame, GOvalScaleModeFitCircle, marker_length, DEG_TO_TRIGANGLE(i * 30), DEG_TO_TRIGANGLE(i * 30 + 1));
       }
     }
   }
