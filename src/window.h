@@ -8,6 +8,8 @@ void main_window_redraw();
 
 void main_window_init();
 
+void main_window_deinit();
+
 void main_window_minute_update(int hours, int minutes);
 
 void main_window_date_update(int date);
