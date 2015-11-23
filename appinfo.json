@@ -14,7 +14,8 @@
 	    "bar_radius": 7,
 	    "bar_offset": 8,
 	    "ring_markings": 9,
-		"bt_vibe": 10
+		"bt_vibe": 10,
+		"low_bat_threshold": 11
 	},
 	"preferences": {
 	    "items": [
@@ -91,6 +92,14 @@
 				"default": true,
 				"off-text": "Vibration off",
 				"on-text": "Vibration on"
+			},
+			{
+				"name": "low_bat_threshold",
+				"title": "Low battery threshold",
+				"type": "integer",
+				"min": 0,
+				"max": 100,
+				"default": 20
 			}
 	    ]
 	},
@@ -106,7 +115,7 @@
         "chalk"
     ],
     "uuid": "3b410000-c8f5-47cd-af5a-ab33c8f92ea7",
-    "versionLabel": "1.13",
+    "versionLabel": "1.14",
     "watchapp": {
         "watchface": true
     }

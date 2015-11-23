@@ -5,7 +5,7 @@ static Layer *s_rings_canvas;
 static TextLayer *s_main_text_layer;
 
 static GColor8 MINUTES_COLOR, MINUTES_NO_BT_COLOR, HOURS_COLOR, HOURS_NO_BT_COLOR, TEXT_COLOR, TEXT_LOW_BATTERY_COLOR, BG_COLOR;
-static int BAR_RADIUS, BAR_OFFSET;
+static int BAR_RADIUS, BAR_OFFSET, LOW_BAT_THRESHOLD;
 static bool RING_MARKINGS;
 
 static int s_hours = 0, s_minutes = 0, s_date = 0;
@@ -81,7 +81,7 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
       bool mono_color = (i == 0 && s_minutes == 0) || (i != 0 && i * 5 != s_minutes);
       
       if(mono_color){
-        if((i == 0 && minutes_reversed) || (i < s_minutes && !minutes_reversed) || (i > s_minutes && minutes_reversed)){
+        if((i == 0 && minutes_reversed) || (i * 5 < s_minutes && !minutes_reversed) || (i * 5 > s_minutes && minutes_reversed)){
           graphics_context_set_fill_color(ctx, BG_COLOR);
         }
         else{
@@ -157,7 +157,7 @@ static void window_unload(Window *window) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "end of window unload");
 }
 
-void main_window_set_config(GColor8 mc, GColor8 mnbtc, GColor8 hc, GColor8 hnbtc, GColor8 tc, GColor8 tlbc, GColor8 bc, int br, int bo, bool rm) {
+void main_window_set_config(GColor8 mc, GColor8 mnbtc, GColor8 hc, GColor8 hnbtc, GColor8 tc, GColor8 tlbc, GColor8 bc, int br, int bo, bool rm, int lbt) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "start of set config");
   MINUTES_COLOR = mc;
   MINUTES_NO_BT_COLOR = mnbtc;
@@ -169,6 +169,7 @@ void main_window_set_config(GColor8 mc, GColor8 mnbtc, GColor8 hc, GColor8 hnbtc
   BAR_RADIUS = br;
   BAR_OFFSET = bo;
   RING_MARKINGS = rm;
+  LOW_BAT_THRESHOLD = lbt;
   APP_LOG(APP_LOG_LEVEL_DEBUG, "end of set config");
 }
 
@@ -214,7 +215,7 @@ void main_window_date_update(int date) {
 void main_window_battery_update(int battery) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "start of battery update");
   bool tmp_low_bat = false;
-  if(battery <= 20){
+  if(battery <= LOW_BAT_THRESHOLD){
     tmp_low_bat = true;
   }
   if(tmp_low_bat != low_bat){

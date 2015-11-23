@@ -51,7 +51,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "start of msg handler");
   autoconfig_in_received_handler(iter, context);
 
-  main_window_set_config(getMinutes_color(), getMinutes_no_bt_color(), getHours_color(), getHours_no_bt_color(), getText_color(), getText_low_battery_color(), getBg_color(), getBar_radius(), getBar_offset(), getRing_markings());
+  main_window_set_config(getMinutes_color(), getMinutes_no_bt_color(), getHours_color(), getHours_no_bt_color(), getText_color(), getText_low_battery_color(), getBg_color(), getBar_radius(), getBar_offset(), getRing_markings(), getLow_bat_threshold());
   BT_VIBE = getBt_vibe();
   main_window_redraw();
   APP_LOG(APP_LOG_LEVEL_DEBUG, "end of msg handler");
@@ -61,7 +61,7 @@ static void init() {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "start of init");
   autoconfig_init(512, 512);
   app_message_register_inbox_received(in_received_handler);
-  main_window_set_config(getMinutes_color(), getMinutes_no_bt_color(), getHours_color(), getHours_no_bt_color(), getText_color(), getText_low_battery_color(), getBg_color(), getBar_radius(), getBar_offset(), getRing_markings());
+  main_window_set_config(getMinutes_color(), getMinutes_no_bt_color(), getHours_color(), getHours_no_bt_color(), getText_color(), getText_low_battery_color(), getBg_color(), getBar_radius(), getBar_offset(), getRing_markings(), getLow_bat_threshold());
   BT_VIBE = getBt_vibe();
   main_window_init();
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);

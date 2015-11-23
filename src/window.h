@@ -2,7 +2,7 @@
 
 #include <pebble.h>
 
-void main_window_set_config(GColor8 mc, GColor8 mnbtc, GColor8 hc, GColor8 hnbtc, GColor8 tc, GColor8 tlbc, GColor8 bc, int br, int bo, bool rm);
+void main_window_set_config(GColor8 mc, GColor8 mnbtc, GColor8 hc, GColor8 hnbtc, GColor8 tc, GColor8 tlbc, GColor8 bc, int br, int bo, bool rm, int lbt);
 
 void main_window_redraw();
 
