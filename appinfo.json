@@ -111,12 +111,10 @@
   "sdkVersion": "3",
   "shortName": "Target",
   "targetPlatforms": [
-    "aplite",
-    "basalt",
     "chalk"
   ],
   "uuid": "3b410000-c8f5-47cd-af5a-ab33c8f92ea7",
-  "versionLabel": "1.14",
+  "versionLabel": "1.15",
   "watchapp": {
     "watchface": true
   }
