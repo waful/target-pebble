@@ -46,7 +46,7 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   
   // Convert hour from 24 to 12h
   double tmp_s_hours = s_hours;
-  tmp_s_hours -= (tmp_s_hours > 12) ? 12 : 0;
+  tmp_s_hours -= (tmp_s_hours >= 12) ? 12 : 0;
   tmp_s_hours += (s_minutes / 60.0);
 
   // Minutes are expanding circle arc
