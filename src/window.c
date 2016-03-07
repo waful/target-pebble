@@ -37,7 +37,7 @@ static void draw_hour_and_minute(Layer *layer, GContext *ctx){
   bool minutes_reversed = false;
   bool hours_reversed = false;
   
-  if(s_hours > 12){
+  if(s_hours >= 12){
     hours_reversed = true;
   }
   if(s_hours % 2){
